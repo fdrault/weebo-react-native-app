@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-import { DetailScreen } from '../module/detail/detail-screen';
-import { FavoriteScreen } from '../module/favorite/favorite-screen';
-import { HomeScreen } from '../module/home/home-screen';
-import { SearchScreen } from '../module/search/search-screen';
+import { DetailScreen } from '../../module/detail/detail-screen';
+import { FavoriteScreen } from '../../module/favorite/favorite-screen';
+import { HomeScreen } from '../../module/home/home-screen';
+import { SearchScreen } from '../../module/search/search-screen';
 import { Route } from './route';
 
 const Tab = createBottomTabNavigator();
