@@ -5,6 +5,9 @@ export const font = {
   regular: {
     fontFamily: 'BeVietnamPro-Regular',
   },
+  medium: {
+    fontFamily: 'BeVietnamPro-Medium',
+  },
   bold: {
     fontFamily: 'BeVietnamPro-Bold',
   },
@@ -14,9 +17,19 @@ export const font = {
 } satisfies { [key: string]: StyleProp<TextStyle> };
 
 export const textStyles = {
-  header: {
+  h1: {
     ...font.bold,
     fontSize: 30,
     color: colors.blueGrey,
   },
+  h2: {
+    ...font.bold,
+    fontSize: 20,
+    color: colors.blueGrey,
+  },
+  h4: {
+    ...font.medium,
+    fontSize: 20,
+    color: colors.blueGrey,
+  }
 } satisfies { [key: string]: StyleProp<TextStyle> };

@@ -12,3 +12,7 @@ export const colors = {
   blueGrey: "#CBD5E1",
   white10: "#302739",  // #FFFFFF à 10% sur #191022
 };
+
+export const theme = {
+  primary: colors.purple
+}
