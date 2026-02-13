@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { Screen } from '../../ui/screen';
+import { Header } from '../../ui/header';
+import { layout } from '../../style/layout';
 
 export const FavoriteScreen = () => {
 
     return (
     <Screen>
-      <View style={styles.screen}>
-        <Text>Favorite</Text>
-      </View>
+      <Header style={[layout.horizontalPaddedContainer, layout.topScreen]} title="Mes Favoris" />
     </Screen>
   );
 };

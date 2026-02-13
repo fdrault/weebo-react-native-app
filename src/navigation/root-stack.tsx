@@ -11,7 +11,7 @@ const Tab = createBottomTabNavigator();
 const RootStack = createStackNavigator();
 
 const TabNavigator = () => (
-  <Tab.Navigator>
+  <Tab.Navigator screenOptions={{headerShown: false}}>
     <Tab.Screen name={Route.Home} component={HomeScreen} />
     <Tab.Screen name={Route.Search} component={SearchScreen} />
     <Tab.Screen name={Route.Favorite} component={FavoriteScreen} />

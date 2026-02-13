@@ -1,6 +1,7 @@
 import React from "react";
-import { StatusBar, useColorScheme } from "react-native";
+import { StatusBar, StyleSheet, useColorScheme } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { colors } from "../style/color";
 
 interface ScreenProps {
     children?: React.ReactNode;
@@ -8,12 +9,17 @@ interface ScreenProps {
 
 export function Screen(props: ScreenProps) {
     const {children} = props;
-  const isDarkMode = useColorScheme() === 'dark';
 
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+    <SafeAreaProvider style={styles.background}>
+      <StatusBar barStyle={'light-content'}  />
       {children}
     </SafeAreaProvider>
   );
 }
+
+const styles = StyleSheet.create({
+    background: {
+        backgroundColor: colors.darkBg80
+    }
+})
