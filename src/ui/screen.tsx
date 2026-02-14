@@ -1,7 +1,7 @@
+import { colors } from '@/style/color';
 import React from 'react';
 import { ScrollView, StatusBar, StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { colors } from '../style/color';
 
 interface ScreenProps {
   children?: React.ReactNode;

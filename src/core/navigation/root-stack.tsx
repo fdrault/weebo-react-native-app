@@ -1,3 +1,4 @@
+import { TabBar } from '@/ui/tab-bar';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { DetailScreen } from '../../module/detail/detail-screen';
@@ -11,7 +12,11 @@ const Tab = createBottomTabNavigator();
 const RootStack = createStackNavigator();
 
 const TabNavigator = () => (
-  <Tab.Navigator screenOptions={{headerShown: false}}>
+  <Tab.Navigator
+    screenOptions={{ headerShown: false }}
+    // eslint-disable-next-line react/no-unstable-nested-components
+    tabBar={props => <TabBar {...props} />}
+  >
     <Tab.Screen name={Route.Home} component={HomeScreen} />
     <Tab.Screen name={Route.Search} component={SearchScreen} />
     <Tab.Screen name={Route.Favorite} component={FavoriteScreen} />
