@@ -1,19 +1,14 @@
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import { Screen } from '../../ui/screen';
-import { useNavigation } from '../../core/navigation/use-navigation';
-import { Header } from '../../ui/header';
-import { layout } from '../../style/layout';
+import { StyleSheet, Text, View } from 'react-native';
 import { useAsync, useAsyncOnFocus } from '../../core/api/use-async';
-import { seasonNowService } from '../../lib/season-now/season-now-service';
+import { useNavigation } from '../../core/navigation/use-navigation';
 import { useStore } from '../../core/store/store';
-import { colors } from '../../style/color';
+import { seasonNowService } from '../../lib/season-now/season-now-service';
+import { textStyles } from '../../style/font';
+import { layout } from '../../style/layout';
+import { Grid } from '../../ui/grid';
+import { Header } from '../../ui/header';
 import { LoadingIndicator } from '../../ui/loading-indicator';
+import { Screen } from '../../ui/screen';
 import { AnimeCard } from './anime-card';
 
 export const HomeScreen = () => {
@@ -30,23 +25,28 @@ export const HomeScreen = () => {
         style={[layout.horizontalPaddedContainer, layout.topScreen]}
         title="Découvrir"
       />
+      <View style={styles.sectionTitleContainer}>
+        <Text style={textStyles.h2}>Saison en cours</Text>
+      </View>
       {seasonNowLoading ? (
         <LoadingIndicator />
       ) : (
-        season.map(anime => (
-          <AnimeCard key={anime.mal_id} anime={anime} />
-        ))
+        <Grid
+          style={layout.horizontalPaddedContainer}
+          rowSize={2}
+          rowGap={16}
+          columnGap={16}
+          data={season}
+          renderItem={anime => <AnimeCard key={anime.mal_id} anime={anime} />}
+        />
       )}
     </Screen>
   );
 };
 
 const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
+  sectionTitleContainer: {
+    ...layout.horizontalPaddedContainer,
+    paddingBottom: 16,
   },
-  animeTitle: {
-    color: colors.blueGrey,
-    fontSize: 22
-  }
 });

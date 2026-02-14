@@ -17,12 +17,14 @@ export const AnimeCard = (props: AnimeCardProps) => {
   const { style, anime } = props;
 
   return (
-    <View style={style}>
+    <View style={[styles.container, style]}>
       <Image
         style={styles.image}
         source={{ uri: anime.images.jpg.image_url }}
       />
-      <Text style={textStyles.h4}>{anime.title}</Text>
+      <Text numberOfLines={2} style={styles.title}>
+        {anime.title}
+      </Text>
     </View>
   );
 };
@@ -31,7 +33,10 @@ const styles = StyleSheet.create({
   container: {},
   image: {
     height: 170,
-    aspectRatio: 1,
     marginBottom: 7,
+    borderRadius: 8,
+  },
+  title: {
+    ...textStyles.h4,
   },
 });

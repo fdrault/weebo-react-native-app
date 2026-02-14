@@ -1,19 +1,17 @@
-import { getSeasonNow } from "../../core/api/jikan";
-import { AnimeData } from "../../core/api/jikan-dto";
-import { createStore } from "../../core/store/store";
+import { getSeasonNow } from '../../core/api/jikan';
+import { AnimeData } from '../../core/api/jikan-dto';
+import { createStore } from '../../core/store/store';
 
 const buildSeasonNowService = () => {
+  const seasonNowList = createStore<AnimeData[]>([]);
 
-    const seasonNowList = createStore<AnimeData[]>([]); 
+  const fetchSeasonNow = async () => {
+    console.log('fetching Season Now...');
+    const result = await getSeasonNow({ limit: 10 });
+    seasonNowList.set(result.data);
+  };
 
-    const fetchSeasonNow = async () => {
-        console.log("fetching Season Now...");
-        const result = await getSeasonNow({limit: 10});
-        seasonNowList.set(result.data);
-    }
-
-    return {seasonNowList: seasonNowList.readonly, fetchSeasonNow}
-
-}
+  return { seasonNowList: seasonNowList.readonly, fetchSeasonNow };
+};
 
 export const seasonNowService = buildSeasonNowService();

@@ -29,7 +29,7 @@ export const textStyles = {
   },
   h4: {
     ...font.medium,
-    fontSize: 20,
+    fontSize: 14,
     color: colors.blueGrey,
-  }
+  },
 } satisfies { [key: string]: StyleProp<TextStyle> };

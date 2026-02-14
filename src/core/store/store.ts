@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from "react";
+import { useSyncExternalStore } from 'react';
 
 export const useStore = <T>(store: ReadableStore<T>) => {
   return useSyncExternalStore(store.subscribe, store.get);
@@ -18,11 +18,10 @@ type FlattenObject<T> = {
   [K in keyof T]: T[K] extends ReadableStore<infer V> ? V : never;
 };
 
-
 export type WritableStore<T> = ReadableStore<T> & {
   set: (nextState: T) => void;
   update: (updater: (currentState: T) => T) => void;
-  readonly: ReadableStore<T>
+  readonly: ReadableStore<T>;
 };
 
 export const createStore = <State>(
@@ -54,7 +53,14 @@ export const createStore = <State>(
   ) => ReadableStore<Slice> = selector =>
     createDerivedStore({ get, subscribe, select }, selector);
 
-  return { get, subscribe, set, update, select , readonly: { get, subscribe, select} };
+  return {
+    get,
+    subscribe,
+    set,
+    update,
+    select,
+    readonly: { get, subscribe, select },
+  };
 };
 
 const createDerivedStore = <State, Slice>(
@@ -116,7 +122,7 @@ export const combineStores = <
   const get = (): Result => {
     const currentValues = getMappedValues();
     const hasChanged = storeEntries.some(
-      ([key]) => (currentValues as any)[key] !== (lastMappedValues as any)[key]
+      ([key]) => (currentValues as any)[key] !== (lastMappedValues as any)[key],
     );
 
     if (hasChanged) {
@@ -134,13 +140,14 @@ export const combineStores = <
           lastResult = nextResult;
           listener(lastResult);
         }
-      })
+      }),
     );
-    return () => unsubs.forEach((fn) => fn());
+    return () => unsubs.forEach(fn => fn());
   };
 
-  const select: <U>(s: (state: Result) => U) => ReadableStore<U> = <U>(s: (state: Result) => U) =>
-    createDerivedStore({ get, subscribe, select }, s);
+  const select: <U>(s: (state: Result) => U) => ReadableStore<U> = <U>(
+    s: (state: Result) => U,
+  ) => createDerivedStore({ get, subscribe, select }, s);
 
   return { get, subscribe, select };
 };
