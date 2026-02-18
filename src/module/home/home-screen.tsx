@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { useAsync, useAsyncOnFocus } from '../../core/api/use-async';
-import { useNavigation } from '../../core/navigation/use-navigation';
 import { useStore } from '../../core/store/store';
 import { seasonNowService } from '../../lib/season-now/season-now-service';
 import { textStyles } from '../../style/font';
@@ -12,7 +11,6 @@ import { Screen } from '../../ui/screen';
 import { AnimeCard } from './anime-card';
 
 export const HomeScreen = () => {
-  const navigation = useNavigation();
   const [fetchSeasonNow, seasonNowLoading] = useAsync(
     seasonNowService.fetchSeasonNow,
   );

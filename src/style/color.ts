@@ -3,6 +3,7 @@ export const colors = {
   white95: '#F1F5F9',
   purple: '#7F13EC',
   darkBg80: '#191022',
+  darkBgSecondary: '#2d1f38',
   purple90: '#201629',
   yellow: '#EAB308',
   white05: '#241B2D', // #FFFFFF à 5% sur #191022

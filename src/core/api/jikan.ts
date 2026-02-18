@@ -18,6 +18,24 @@ export const getSeasonNow = async (params: GetSeasonQueryParams) => {
   return (await result.json()) as GetSeasonNowResponse;
 };
 
+type GetAnimeSearchQueryParams = {
+  q: string;
+  type?: EntryType[];
+  sfw?: boolean;
+  unapproved?: boolean;
+  continuing?: boolean;
+  page?: number;
+  limit?: number;
+};
+export const getAnimeSearch = async (
+  params: GetAnimeSearchQueryParams,
+  signal: AbortSignal,
+) => {
+  const url = `${JIKAN_BASE}anime?${mapParams(params)}`;
+  const result = await fetch(url, { signal });
+  if (!result.ok) throw new Error('Failed to fetch');
+  return (await result.json()) as GetSeasonNowResponse;
+};
 
 const mapParams = (params: { [key: string]: unknown }) => {
   const array = Object.entries(params);
@@ -25,7 +43,6 @@ const mapParams = (params: { [key: string]: unknown }) => {
     .map(([key, value]) => {
       switch (typeof value) {
         case 'string':
-        // BREAKTHROUGH
         case 'number':
           return `${key}=${value}`;
         case 'boolean':
@@ -37,7 +54,7 @@ const mapParams = (params: { [key: string]: unknown }) => {
             }
             return '';
           }
-        // BREAKTHROUGH
+        // fallthrough
         default: {
           console.warn(`Unable to transform query params ${key}, ignoring it`);
           return '';

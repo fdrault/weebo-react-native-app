@@ -25,11 +25,11 @@ export const useAsyncOnFocus = (
 ) => {
   const timestamp = useRef(0);
   const operationWrapped = useCallback(() => {
-      const now = new Date().getTime();
+    const now = new Date().getTime();
     if (now - timestamp.current > ttl) {
-        timestamp.current = now;
-        operation();
+      timestamp.current = now;
+      operation();
     }
-  }, [ttl])
+  }, [ttl, operation]);
   useFocusEffect(() => operationWrapped());
 };
