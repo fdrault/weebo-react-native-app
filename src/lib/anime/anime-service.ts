@@ -6,11 +6,12 @@ import { createStore } from '@/core/store/store';
 class AnimeService {
   animes = createStore<Map<number, AnimeData>>(new Map());
 
-  searchAnime = async (q: string, signal: AbortSignal) => {
-    const result = await getAnimeSearch({ q, limit: 10 }, signal);
-    this.updateAnimeEntries(result.data);
-    return result.data;
-  };
+  searchAnime: (q: string, signal: AbortSignal) => Promise<AnimeData[]> =
+    async (q, signal) => {
+      const result = await getAnimeSearch({ q, limit: 10 }, signal);
+      this.updateAnimeEntries(result.data);
+      return result.data;
+    };
 
   searchAnimeLoader = new Loader(this.searchAnime, { wait: 1000 });
 

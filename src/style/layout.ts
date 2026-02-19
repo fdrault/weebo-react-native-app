@@ -5,6 +5,6 @@ export const layout = {
     paddingHorizontal: 24,
   },
   topScreen: {
-    paddingTop: 12
-  }
+    paddingTop: 12,
+  },
 } satisfies { [key: string]: StyleProp<ViewStyle> };

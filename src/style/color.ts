@@ -11,6 +11,7 @@ export const colors = {
   purple20: '#2E114B', // #7F13EC à 20% sur #191022
   purple10: '#231137', // #7F13EC à 10% sur #191022
   blueGrey: '#CBD5E1',
+  grey: '#94A3B8',
   white10: '#302739', // #FFFFFF à 10% sur #191022
 };
 

@@ -27,9 +27,19 @@ export const textStyles = {
     fontSize: 20,
     color: colors.blueGrey,
   },
+  h3: {
+    ...font.bold,
+    fontSize: 16,
+    color: colors.blueGrey,
+  },
   h4: {
     ...font.medium,
     fontSize: 14,
     color: colors.blueGrey,
+  },
+  regular: {
+    ...font.regular,
+    fontSize: 12,
+    color: colors.grey,
   },
 } satisfies { [key: string]: StyleProp<TextStyle> };

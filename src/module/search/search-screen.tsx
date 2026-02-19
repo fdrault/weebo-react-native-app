@@ -1,9 +1,9 @@
 import { LoaderStatus } from '@/core/api/loader';
 import { useStore } from '@/core/store/store';
 import { animeService } from '@/lib/anime/anime-service';
-import { AnimeCard } from '@/module/home/anime-card';
+import { AnimeRow } from '@/module/search/anime-row';
 import { colors } from '@/style/color';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Image, StyleSheet, TextInput, View } from 'react-native';
 import { layout } from '../../style/layout';
 import { Header } from '../../ui/header';
@@ -38,7 +38,9 @@ export const SearchScreen = () => {
           />
         </View>
         {result.status === LoaderStatus.SUCCESS
-          ? result.data.map(a => <AnimeCard key={a.mal_id} anime={a} />)
+          ? result.data.map(a => (
+              <AnimeRow key={a.mal_id} anime={a} style={styles.animeRow} />
+            ))
           : null}
       </View>
     </Screen>
@@ -58,5 +60,8 @@ const styles = StyleSheet.create({
   textInput: {
     paddingStart: 16,
     flex: 1,
+  },
+  animeRow: {
+    marginBottom: 8,
   },
 });
