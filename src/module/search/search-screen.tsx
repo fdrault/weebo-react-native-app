@@ -1,24 +1,27 @@
-import { LoaderStatus } from '@/core/api/loader';
+import { LoaderStatus, LoaderWithCache } from '@/core/api/loader';
 import { useStore } from '@/core/store/store';
+import { useLazyRef } from '@/core/use-lazy-ref';
 import { animeService } from '@/lib/anime/anime-service';
 import { AnimeRow } from '@/module/search/anime-row';
 import { colors } from '@/style/color';
-import React, { useEffect, useRef, useState } from 'react';
+import { layout } from '@/style/layout';
+import { Header } from '@/ui/header';
+import { Screen } from '@/ui/screen';
+import React, { useEffect, useState } from 'react';
 import { Image, StyleSheet, TextInput, View } from 'react-native';
-import { layout } from '../../style/layout';
-import { Header } from '../../ui/header';
-import { Screen } from '../../ui/screen';
 
 export const SearchScreen = () => {
   const [searchInput, setSearch] = useState('');
-  const loader = useRef(animeService.searchAnimeLoader);
+  const loader = useLazyRef(
+    () => new LoaderWithCache(animeService.searchAnime, { wait: 1000 }),
+  );
   const result = useStore(loader.current.state);
 
   useEffect(() => {
     if (searchInput.length > 0) {
       loader.current.load(searchInput);
     }
-  }, [searchInput]);
+  }, [searchInput, loader]);
 
   return (
     <Screen>
@@ -62,6 +65,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   animeRow: {
-    marginBottom: 8,
+    marginBottom: 14,
   },
 });

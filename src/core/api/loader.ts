@@ -34,7 +34,7 @@ export type LoadingStatus<T> =
   | LoadSuccess<T>
   | LoadFailure;
 
-export class Loader<Args, Result> {
+export class LoaderWithCache<Args, Result> {
   private readonly loaderStatus: WritableStore<LoadingStatus<Result>>;
   private abortController: AbortController | null = null;
   private readonly debouncedLoad: (args: Args) => void;
@@ -91,6 +91,125 @@ export class Loader<Args, Result> {
     }
   }
 
+  abort = () => {
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
+  };
+}
+
+export type SimpleLoadingStatus = { status: LoaderStatus; error: Error | null };
+type LoaderStrategy =
+  | { type: 'debounce'; wait: number }
+  | { type: 'ttl'; duration?: number }
+  | { type: 'swr'; duration?: number }
+  | { type: 'none' };
+
+export class Loader<Args, Result> {
+  private readonly stateStore: WritableStore<SimpleLoadingStatus>;
+  private readonly revalidationStore: WritableStore<SimpleLoadingStatus>;
+  private abortController: AbortController | null = null;
+  private lastExecutionTime = 0;
+  private readonly trigger: (...args: Args[]) => void;
+
+  public readonly state;
+
+  constructor(
+    private operation: (
+      signal: AbortSignal,
+      ...args: Args[]
+    ) => Promise<Result> | Result,
+    private config: LoaderStrategy = { type: 'none' },
+  ) {
+    this.stateStore = createStore<SimpleLoadingStatus>({
+      status: LoaderStatus.PENDING,
+      error: null,
+    });
+    this.revalidationStore = createStore<SimpleLoadingStatus>({
+      status: LoaderStatus.PENDING,
+      error: null,
+    });
+    this.state = this.stateStore.readonly;
+    this.trigger = this.createTrigger(this.config);
+  }
+
+  load = (...args: Args[]) => {
+    this.trigger(...args);
+  };
+
+  private createTrigger(config: LoaderStrategy) {
+    const execute = (isRevalidating: boolean, ...args: Args[]) =>
+      this.performExecution(isRevalidating, ...args);
+
+    switch (config.type) {
+      case 'debounce':
+        return debounce((...args: Args[]) => {
+          this.update(this.stateStore, LoaderStatus.LOADING);
+          execute(false, ...args);
+        }, config.wait);
+
+      case 'ttl':
+      case 'swr':
+        return (...args: Args[]) => {
+          const now = Date.now();
+          const isStale =
+            now - this.lastExecutionTime >= (config.duration ?? 1000);
+          const isFirstLoad =
+            this.stateStore.get().status !== LoaderStatus.SUCCESS;
+
+          if (isFirstLoad) {
+            this.update(this.stateStore, LoaderStatus.LOADING);
+            execute(false, ...args);
+          } else if (isStale) {
+            const isSWR = config.type === 'swr';
+            this.update(
+              isSWR ? this.revalidationStore : this.stateStore,
+              LoaderStatus.LOADING,
+            );
+            execute(isSWR, ...args);
+          }
+        };
+
+      default:
+        return (...args: Args[]) => {
+          this.update(this.stateStore, LoaderStatus.LOADING);
+          execute(false, ...args);
+        };
+    }
+  }
+  private update(
+    store: WritableStore<SimpleLoadingStatus>,
+    status: LoaderStatus,
+    error: Error | null = null,
+  ) {
+    if (status === LoaderStatus.SUCCESS) {
+      store.set({ status, error: null });
+    } else {
+      store.update(s => ({ status, error: error ?? s.error }));
+    }
+  }
+
+  private async performExecution(isRevalidating: boolean, ...args: Args[]) {
+    this.abort();
+    this.abortController = new AbortController();
+
+    const targetStore = isRevalidating
+      ? this.revalidationStore
+      : this.stateStore;
+    try {
+      await this.operation(this.abortController.signal, ...args);
+      this.lastExecutionTime = Date.now();
+      this.update(targetStore, LoaderStatus.SUCCESS);
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
+      this.update(
+        targetStore,
+        LoaderStatus.FAILURE,
+        error instanceof Error ? error : new Error('Loader failure'),
+      );
+    }
+  }
   abort = () => {
     if (this.abortController) {
       this.abortController.abort();

@@ -1,8 +1,8 @@
+import { layout } from '@/style/layout';
+import { Grid } from '@/ui/grid';
+import { Header } from '@/ui/header';
+import { Screen } from '@/ui/screen';
 import { StyleSheet, View } from 'react-native';
-import { layout } from '../../style/layout';
-import { Grid } from '../../ui/grid';
-import { Header } from '../../ui/header';
-import { Screen } from '../../ui/screen';
 
 export const FavoriteScreen = () => {
   const data = new Array(9).fill(0);

@@ -1,10 +1,17 @@
-import { getAnimeSearch } from '@/core/api/jikan';
+import { getAnimeSearch, getSeasonNow } from '@/core/api/jikan';
 import { AnimeData } from '@/core/api/jikan-dto';
-import { Loader } from '@/core/api/loader';
-import { createStore } from '@/core/store/store';
+import { combineStores, createStore } from '@/core/store/store';
 
-class AnimeService {
-  animes = createStore<Map<number, AnimeData>>(new Map());
+type MyAnimeListId = number;
+
+export class AnimeService {
+  animes = createStore<Map<MyAnimeListId, AnimeData>>(new Map());
+
+  seasonNowIds = createStore<MyAnimeListId[]>([]);
+  seasonNow = combineStores(
+    { ids: this.seasonNowIds, animes: this.animes },
+    ({ ids, animes }) => ids.map(id => animes.get(id)!),
+  );
 
   searchAnime: (q: string, signal: AbortSignal) => Promise<AnimeData[]> =
     async (q, signal) => {
@@ -13,16 +20,24 @@ class AnimeService {
       return result.data;
     };
 
-  searchAnimeLoader = new Loader(this.searchAnime, { wait: 1000 });
-
-  private updateAnimeEntries(entries: AnimeData[]) {
+  private updateAnimeEntries = (entries: AnimeData[]) => {
     this.animes.update(animeMap => {
+      const updatedMap = new Map(animeMap);
       for (const entry of entries) {
-        animeMap.set(entry.mal_id, entry);
+        console.log('Update entry', entry.title);
+        updatedMap.set(entry.mal_id, entry);
       }
-      return animeMap;
+      return updatedMap;
     });
-  }
+  };
+
+  fetchSeasonNow = async (signal: AbortSignal) => {
+    console.log('fetching Season Now...');
+    const result = await getSeasonNow({ limit: 10 }, signal);
+    this.updateAnimeEntries(result.data);
+    this.seasonNowIds.set(result.data.map(a => a.mal_id));
+    return result.data;
+  };
 }
 
 export const animeService = new AnimeService();

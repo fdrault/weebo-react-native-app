@@ -11,9 +11,12 @@ type GetSeasonQueryParams = {
   limit?: number;
 };
 
-export const getSeasonNow = async (params: GetSeasonQueryParams) => {
+export const getSeasonNow = async (
+  params: GetSeasonQueryParams,
+  signal: AbortSignal,
+) => {
   const url = `${JIKAN_BASE}seasons/now?${mapParams(params)}`;
-  const result = await fetch(url);
+  const result = await fetch(url, { signal });
   if (!result.ok) throw new Error('Failed to fetch');
   return (await result.json()) as GetSeasonNowResponse;
 };

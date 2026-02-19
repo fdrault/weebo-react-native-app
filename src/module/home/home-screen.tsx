@@ -1,22 +1,27 @@
+import { Loader, LoaderStatus } from '@/core/api/loader';
+import { useLoaderOnFocus } from '@/core/api/use-loader';
+import { useStore } from '@/core/store/store';
+import { animeService } from '@/lib/anime/anime-service';
+import { textStyles } from '@/style/font';
+import { layout } from '@/style/layout';
+import { Grid } from '@/ui/grid';
+import { Header } from '@/ui/header';
+import { LoadingIndicator } from '@/ui/loading-indicator';
+import { Screen } from '@/ui/screen';
 import { StyleSheet, Text, View } from 'react-native';
-import { useAsync, useAsyncOnFocus } from '../../core/api/use-async';
-import { useStore } from '../../core/store/store';
-import { seasonNowService } from '../../lib/season-now/season-now-service';
-import { textStyles } from '../../style/font';
-import { layout } from '../../style/layout';
-import { Grid } from '../../ui/grid';
-import { Header } from '../../ui/header';
-import { LoadingIndicator } from '../../ui/loading-indicator';
-import { Screen } from '../../ui/screen';
 import { AnimeCard } from './anime-card';
 
 export const HomeScreen = () => {
-  const [fetchSeasonNow, seasonNowLoading] = useAsync(
-    seasonNowService.fetchSeasonNow,
+  const { state } = useLoaderOnFocus(
+    () =>
+      new Loader(animeService.fetchSeasonNow, {
+        type: 'swr',
+        duration: 60 * 1000,
+      }),
   );
 
-  const season = useStore(seasonNowService.seasonNowList);
-  useAsyncOnFocus(fetchSeasonNow);
+  const season = useStore(animeService.seasonNow);
+
   return (
     <Screen>
       <Header
@@ -26,7 +31,7 @@ export const HomeScreen = () => {
       <View style={styles.sectionTitleContainer}>
         <Text style={textStyles.h2}>Saison en cours</Text>
       </View>
-      {seasonNowLoading ? (
+      {state.status !== LoaderStatus.SUCCESS ? (
         <LoadingIndicator />
       ) : (
         <Grid
