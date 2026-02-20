@@ -1,6 +1,6 @@
-import { LoaderStatus, LoaderWithCache } from '@/core/api/loader';
-import { useStore } from '@/core/store/store';
-import { useLazyRef } from '@/core/use-lazy-ref';
+import { buildFetcher } from '@/core/fetcher/fetcher';
+import { FetchStatus } from '@/core/fetcher/fetcher-state';
+import { useFetcher } from '@/core/fetcher/use-fetcher';
 import { animeService } from '@/lib/anime/anime-service';
 import { AnimeRow } from '@/module/search/anime-row';
 import { colors } from '@/style/color';
@@ -12,16 +12,15 @@ import { Image, StyleSheet, TextInput, View } from 'react-native';
 
 export const SearchScreen = () => {
   const [searchInput, setSearch] = useState('');
-  const loader = useLazyRef(
-    () => new LoaderWithCache(animeService.searchAnime, { wait: 1000 }),
+  const { fetcher, state: result } = useFetcher(() =>
+    buildFetcher(animeService.searchAnime, { type: 'debounce', wait: 1000 }),
   );
-  const result = useStore(loader.current.state);
-
   useEffect(() => {
     if (searchInput.length > 0) {
-      loader.current.load(searchInput);
+      fetcher.fetch(searchInput);
     }
-  }, [searchInput, loader]);
+    return () => fetcher.abortOngoingRequest();
+  }, [fetcher, searchInput]);
 
   return (
     <Screen>
@@ -40,7 +39,7 @@ export const SearchScreen = () => {
             numberOfLines={1}
           />
         </View>
-        {result.status === LoaderStatus.SUCCESS
+        {result.status === FetchStatus.READY
           ? result.data.map(a => (
               <AnimeRow key={a.mal_id} anime={a} style={styles.animeRow} />
             ))

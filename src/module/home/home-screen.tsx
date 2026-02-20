@@ -1,5 +1,6 @@
-import { Loader, LoaderStatus } from '@/core/api/loader';
-import { useLoaderOnFocus } from '@/core/api/use-loader';
+import { buildFetcher } from '@/core/fetcher/fetcher';
+import { FetchStatus } from '@/core/fetcher/fetcher-state';
+import { useFetchOnFocus } from '@/core/fetcher/use-fetcher';
 import { useStore } from '@/core/store/store';
 import { animeService } from '@/lib/anime/anime-service';
 import { textStyles } from '@/style/font';
@@ -12,12 +13,11 @@ import { StyleSheet, Text, View } from 'react-native';
 import { AnimeCard } from './anime-card';
 
 export const HomeScreen = () => {
-  const { state } = useLoaderOnFocus(
-    () =>
-      new Loader(animeService.fetchSeasonNow, {
-        type: 'swr',
-        duration: 60 * 1000,
-      }),
+  const { state } = useFetchOnFocus(() =>
+    buildFetcher(animeService.fetchSeasonNow, {
+      type: 'swr',
+      duration: 60 * 1000,
+    }),
   );
 
   const season = useStore(animeService.seasonNow);
@@ -31,7 +31,7 @@ export const HomeScreen = () => {
       <View style={styles.sectionTitleContainer}>
         <Text style={textStyles.h2}>Saison en cours</Text>
       </View>
-      {state.status !== LoaderStatus.SUCCESS ? (
+      {state.status !== FetchStatus.READY ? (
         <LoadingIndicator />
       ) : (
         <Grid

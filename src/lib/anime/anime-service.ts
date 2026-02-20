@@ -13,8 +13,8 @@ export class AnimeService {
     ({ ids, animes }) => ids.map(id => animes.get(id)!),
   );
 
-  searchAnime: (q: string, signal: AbortSignal) => Promise<AnimeData[]> =
-    async (q, signal) => {
+  searchAnime: (signal: AbortSignal, q: string) => Promise<AnimeData[]> =
+    async (signal, q) => {
       const result = await getAnimeSearch({ q, limit: 10 }, signal);
       this.updateAnimeEntries(result.data);
       return result.data;
