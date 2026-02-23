@@ -1,13 +1,13 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { Screen } from '../../ui/screen';
+import { ScrollableScreen } from '../../ui/screen';
 
 export const DetailScreen = () => {
   return (
-    <Screen>
+    <ScrollableScreen>
       <View style={styles.screen}>
         <Text>Detail</Text>
       </View>
-    </Screen>
+    </ScrollableScreen>
   );
 };
 

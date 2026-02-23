@@ -5,7 +5,7 @@ import {
 } from '@/core/fetcher/fetcher-state';
 import { WritableStore } from '@/core/store/store';
 
-const buildFetchStateMachine = <Result>(
+export const buildFetchStateMachine = <Result>(
   state: WritableStore<FetchState<Result>>,
 ) => {
   const toReady = (data: Result) =>

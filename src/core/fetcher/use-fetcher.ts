@@ -4,7 +4,7 @@ import { useLazyRef } from '@/core/use-lazy-ref';
 import { useFocusEffect } from '@react-navigation/native';
 import { useEffect } from 'react';
 
-export const useFetcher = <Args, Result>(
+export const useFetcher = <Args extends any[], Result>(
   buildFetcher: () => Fetcher<Args, Result>,
 ) => {
   const fetcherRef = useLazyRef(buildFetcher);
@@ -22,7 +22,7 @@ export const useFetcher = <Args, Result>(
   };
 };
 
-export const useFetchOnFocus = <Args, Result>(
+export const useFetchOnFocus = <Args extends any[], Result>(
   buildFetcher: () => Fetcher<Args, Result>,
 ) => {
   const fetcher = useFetcher(buildFetcher);

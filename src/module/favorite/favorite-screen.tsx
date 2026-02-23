@@ -1,13 +1,13 @@
 import { layout } from '@/style/layout';
 import { Grid } from '@/ui/grid';
 import { Header } from '@/ui/header';
-import { Screen } from '@/ui/screen';
+import { ScrollableScreen } from '@/ui/screen';
 import { StyleSheet, View } from 'react-native';
 
 export const FavoriteScreen = () => {
   const data = new Array(9).fill(0);
   return (
-    <Screen>
+    <ScrollableScreen>
       <Header
         style={[layout.horizontalPaddedContainer, layout.topScreen]}
         title="Mes Favoris"
@@ -24,7 +24,7 @@ export const FavoriteScreen = () => {
         rowGap={10}
         columnGap={2}
       />
-    </Screen>
+    </ScrollableScreen>
   );
 };
 

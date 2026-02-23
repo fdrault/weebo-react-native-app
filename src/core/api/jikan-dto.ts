@@ -3,6 +3,11 @@ export interface GetSeasonNowResponse {
   pagination: Pagination;
 }
 
+export interface GetAnimeSearchResponse {
+  data: AnimeData[];
+  pagination: Pagination;
+}
+
 export interface AnimeData {
   mal_id: number;
   url: string;

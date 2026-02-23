@@ -6,11 +6,11 @@ import {
 import { buildFromStrategy } from '@/core/fetcher/fetcher-strategy';
 import { createStore } from '@/core/store/store';
 
-export type Fetcher<Args, Result> = ReturnType<
+export type Fetcher<Args extends any[], Result> = ReturnType<
   typeof buildFetcher<Args, Result>
 >;
-export const buildFetcher = <Args, Result>(
-  operation: (signal: AbortSignal, ...args: Args[]) => Promise<Result>,
+export const buildFetcher = <Args extends any[], Result>(
+  operation: (signal: AbortSignal, ...args: Args) => Promise<Result>,
   strategy: FetchStrategy,
 ) => {
   const fetchStateStore = createStore<FetchState<Result>>({
@@ -28,13 +28,12 @@ export const buildFetcher = <Args, Result>(
     operation,
   );
 
-  const fetch = (...args: Args[]) => {
-    console.log('Fetch args', args);
+  const fetch = (...args: Args) => {
     if (abortController !== null) {
       abortController.abort();
     }
     abortController = new AbortController();
-    executor(abortController.signal, ...args);
+    executor(abortController.signal, args);
   };
 
   const abortOngoingRequest = () => abortController?.abort();

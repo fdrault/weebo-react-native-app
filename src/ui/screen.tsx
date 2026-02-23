@@ -13,13 +13,22 @@ export function Screen(props: ScreenProps) {
   return (
     <SafeAreaProvider style={styles.background}>
       <StatusBar barStyle={'light-content'} />
+      {children}
+    </SafeAreaProvider>
+  );
+}
+export function ScrollableScreen(props: ScreenProps) {
+  const { children } = props;
+
+  return (
+    <Screen>
       <ScrollView
         style={styles.scrollview}
         contentContainerStyle={styles.scrollviewContainer}
       >
         {children}
       </ScrollView>
-    </SafeAreaProvider>
+    </Screen>
   );
 }
 

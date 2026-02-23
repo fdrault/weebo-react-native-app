@@ -1,4 +1,8 @@
-import { EntryType, GetSeasonNowResponse } from './jikan-dto';
+import {
+  EntryType,
+  GetAnimeSearchResponse,
+  GetSeasonNowResponse,
+} from './jikan-dto';
 
 const JIKAN_BASE = 'https://api.jikan.moe/v4/';
 
@@ -37,7 +41,7 @@ export const getAnimeSearch = async (
   const url = `${JIKAN_BASE}anime?${mapParams(params)}`;
   const result = await fetch(url, { signal });
   if (!result.ok) throw new Error('Failed to fetch');
-  return (await result.json()) as GetSeasonNowResponse;
+  return (await result.json()) as GetAnimeSearchResponse;
 };
 
 const mapParams = (params: { [key: string]: unknown }) => {

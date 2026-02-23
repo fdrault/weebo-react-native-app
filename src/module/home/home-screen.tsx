@@ -8,7 +8,7 @@ import { layout } from '@/style/layout';
 import { Grid } from '@/ui/grid';
 import { Header } from '@/ui/header';
 import { LoadingIndicator } from '@/ui/loading-indicator';
-import { Screen } from '@/ui/screen';
+import { ScrollableScreen } from '@/ui/screen';
 import { StyleSheet, Text, View } from 'react-native';
 import { AnimeCard } from './anime-card';
 
@@ -21,9 +21,9 @@ export const HomeScreen = () => {
   );
 
   const season = useStore(animeService.seasonNow);
-
+  console.log(season.length);
   return (
-    <Screen>
+    <ScrollableScreen>
       <Header
         style={[layout.horizontalPaddedContainer, layout.topScreen]}
         title="Découvrir"
@@ -43,7 +43,7 @@ export const HomeScreen = () => {
           renderItem={anime => <AnimeCard key={anime.mal_id} anime={anime} />}
         />
       )}
-    </Screen>
+    </ScrollableScreen>
   );
 };
 
