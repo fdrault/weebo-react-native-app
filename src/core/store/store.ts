@@ -21,6 +21,7 @@ type FlattenObject<T> = {
 export type WritableStore<T> = ReadableStore<T> & {
   set: (nextState: T) => void;
   update: (updater: (currentState: T) => T) => void;
+  patch: (p: Partial<T>) => void;
   readonly: ReadableStore<T>;
 };
 
@@ -48,6 +49,8 @@ export const createStore = <State>(
 
   const update = (updater: (s: State) => State) => set(updater(currentState));
 
+  const patch = (p: Partial<State>) => update(s => ({ ...s, ...p }));
+
   const select: <Slice>(
     selector: Selector<State, Slice>,
   ) => ReadableStore<Slice> = selector =>
@@ -58,6 +61,7 @@ export const createStore = <State>(
     subscribe,
     set,
     update,
+    patch,
     select,
     readonly: { get, subscribe, select },
   };

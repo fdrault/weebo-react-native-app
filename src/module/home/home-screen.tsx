@@ -1,27 +1,30 @@
-import { buildFetcher } from '@/core/fetcher/fetcher';
-import { FetchStatus } from '@/core/fetcher/fetcher-state';
-import { useFetchOnFocus } from '@/core/fetcher/use-fetcher';
 import { useStore } from '@/core/store/store';
+import { useLazyRef } from '@/core/use-lazy-ref';
 import { animeService } from '@/lib/anime/anime-service';
+import { SeasonNowController } from '@/module/home/season-now-controller';
 import { textStyles } from '@/style/font';
 import { layout } from '@/style/layout';
 import { Grid } from '@/ui/grid';
 import { Header } from '@/ui/header';
 import { LoadingIndicator } from '@/ui/loading-indicator';
 import { ScrollableScreen } from '@/ui/screen';
+import { useFocusEffect } from '@react-navigation/native';
+import { useCallback } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { AnimeCard } from './anime-card';
 
 export const HomeScreen = () => {
-  const { state } = useFetchOnFocus(() =>
-    buildFetcher(animeService.fetchSeasonNow, {
-      type: 'swr',
-      duration: 60 * 1000,
-    }),
+  const fetcher = useLazyRef(
+    () => new SeasonNowController(animeService.fetchSeasonNow),
   );
+  const state = useStore(fetcher.current.state);
+  const onFocus = useCallback(() => {
+    fetcher.current.fetch();
+    return () => fetcher.current.abort();
+  }, [fetcher]);
+  useFocusEffect(onFocus);
 
   const season = useStore(animeService.seasonNow);
-  console.log(season.length);
   return (
     <ScrollableScreen>
       <Header
@@ -31,7 +34,7 @@ export const HomeScreen = () => {
       <View style={styles.sectionTitleContainer}>
         <Text style={textStyles.h2}>Saison en cours</Text>
       </View>
-      {state.status !== FetchStatus.READY ? (
+      {state.fetching ? (
         <LoadingIndicator />
       ) : (
         <Grid

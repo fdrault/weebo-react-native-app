@@ -18,7 +18,10 @@ export class AnimeService {
     page: number,
     q: string,
   ) => Promise<GetAnimeSearchResponse> = async (signal, page, q) => {
-    const result = await getAnimeSearch({ q, limit: 25, page }, signal);
+    const result = await getAnimeSearch(
+      { q, limit: 25, page, sfw: true },
+      signal,
+    );
     this.updateAnimeEntries(result.data);
     return result;
   };
@@ -27,7 +30,6 @@ export class AnimeService {
     this.animes.update(animeMap => {
       const updatedMap = new Map(animeMap);
       for (const entry of entries) {
-        // console.log('Update entry', entry.title);
         updatedMap.set(entry.mal_id, entry);
       }
       return updatedMap;
@@ -35,11 +37,10 @@ export class AnimeService {
   };
 
   fetchSeasonNow = async (signal: AbortSignal) => {
-    console.log('fetching Season Now...');
-    const result = await getSeasonNow({ limit: 10 }, signal);
+    const result = await getSeasonNow({ limit: 10, sfw: true }, signal);
     this.updateAnimeEntries(result.data);
     this.seasonNowIds.set(result.data.map(a => a.mal_id));
-    return result.data;
+    return result;
   };
 }
 

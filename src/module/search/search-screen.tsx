@@ -1,52 +1,29 @@
-import { FetchStatus } from '@/core/fetcher/fetcher-state';
-import { buildSearchPaginationFetcher } from '@/core/fetcher/pagination-fetcher';
+import { useDebounce } from '@/core/debounce';
 import { useStore } from '@/core/store/store';
 import { useLazyRef } from '@/core/use-lazy-ref';
 import { animeService } from '@/lib/anime/anime-service';
 import { AnimeRow } from '@/module/search/anime-row';
+import { SearchPaginationController } from '@/module/search/search-pagination-controller';
 import { colors } from '@/style/color';
 import { layout } from '@/style/layout';
 import { Header } from '@/ui/header';
 import { LoadingIndicator } from '@/ui/loading-indicator';
 import { Screen } from '@/ui/screen';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { FlatList, Image, StyleSheet, TextInput, View } from 'react-native';
 
 export const SearchScreen = () => {
-  const [searchInput, setSearch] = useState('');
-
-  const fetcherRef = useLazyRef(() =>
-    buildSearchPaginationFetcher(searchInput, animeService.searchAnime),
+  const fetcherRef = useLazyRef(
+    () => new SearchPaginationController(animeService.searchAnime),
   );
 
   useEffect(() => {
     const fetcher = fetcherRef.current;
-    return () => fetcher.abortOngoingRequest();
+    return () => fetcher.abort();
   }, [fetcherRef]);
-  useEffect(() => {
-    if (searchInput.length > 0) {
-      fetcherRef.current.abortOngoingRequest();
-      fetcherRef.current = buildSearchPaginationFetcher(
-        searchInput,
-        animeService.searchAnime,
-      );
-      fetcherRef.current.fetch();
-    } else {
-      fetcherRef.current.reset();
-    }
-  }, [searchInput, fetcherRef]);
 
-  const state = useStore(fetcherRef.current.fetchState);
-  const fetchMoreState = useStore(fetcherRef.current.fetchMoreState);
-  const refreshState = useStore(fetcherRef.current.refreshState);
-  const hasMore =
-    state.status === FetchStatus.READY && state.data.pagination.has_next_page;
-  console.log(
-    state.status === FetchStatus.READY
-      ? `"${searchInput}" Result Length: ${state.data.data.length}`
-      : 'Fetching',
-  );
-  console.log(`Status: ${fetchMoreState.status}`);
+  const state = useStore(fetcherRef.current.state);
+  const search = useDebounce((q: string) => fetcherRef.current.fetch(q), 1000);
 
   return (
     <Screen>
@@ -59,15 +36,17 @@ export const SearchScreen = () => {
           <Image source={require('@images/24-magnifier.png')} />
           <TextInput
             style={styles.textInput}
-            onChangeText={setSearch}
+            onChangeText={search}
             placeholder="Anime, studios..."
             placeholderTextColor={colors.blueGrey}
             numberOfLines={1}
           />
         </View>
-        {state.status === FetchStatus.READY ? (
+        {state.fetching ? (
+          <LoadingIndicator />
+        ) : (
           <FlatList
-            data={state.data.data}
+            data={state.data}
             renderItem={a => (
               <AnimeRow
                 key={a.item.mal_id}
@@ -77,20 +56,16 @@ export const SearchScreen = () => {
             )}
             contentContainerStyle={styles.flatlistContent}
             onEndReached={
-              hasMore ? () => fetcherRef.current.fetchMore() : undefined
+              state.hasMore ? () => fetcherRef.current.fetchMore() : undefined
             }
             style={styles.flatlist}
             ListFooterComponent={
-              fetchMoreState.status === FetchStatus.FETCHING ? (
-                <LoadingIndicator />
-              ) : null
+              state.fetchingMore ? <LoadingIndicator /> : null
             }
             onRefresh={fetcherRef.current.refresh}
-            refreshing={refreshState.status === FetchStatus.FETCHING}
+            refreshing={state.refreshing}
           />
-        ) : state.status === FetchStatus.FETCHING ? (
-          <LoadingIndicator />
-        ) : null}
+        )}
       </View>
     </Screen>
   );
