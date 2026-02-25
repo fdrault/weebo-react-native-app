@@ -1,18 +1,24 @@
+import { springConfig } from '@/style/animation';
 import { colors } from '@/style/color';
 import { font } from '@/style/font';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 
 import React from 'react';
 import {
-  Image,
   ImageSourcePropType,
+  Pressable,
   StyleProp,
   StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
   ViewStyle,
 } from 'react-native';
+import Animated, {
+  interpolateColor,
+  useAnimatedStyle,
+  useDerivedValue,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 
 interface TabItem {
   icon: ImageSourcePropType;
@@ -48,6 +54,7 @@ export const TabBar = (props: BottomTabBarProps) => {
 
 const RenderTab = (tabItem: TabItem, bottomBarProps: BottomTabBarProps) => {
   const { state, descriptors, navigation } = bottomBarProps;
+  const pressed = useSharedValue<boolean>(false);
   const route = state.routes[tabItem.routeIndex];
   const { options } = descriptors[route.key];
   const isFocused = state.index === tabItem.routeIndex;
@@ -71,18 +78,35 @@ const RenderTab = (tabItem: TabItem, bottomBarProps: BottomTabBarProps) => {
     });
   };
 
+  const rPressed = useAnimatedStyle(() => {
+    return {
+      opacity: withSpring(pressed.value ? 0.6 : 1, springConfig.switch),
+      transform: [
+        { scale: withSpring(pressed.value ? 0.9 : 1, springConfig.switch) },
+      ],
+    };
+  });
+
   return (
-    <TouchableOpacity
+    <Pressable
       key={tabItem.label}
       accessibilityRole="button"
       accessibilityState={isFocused ? { selected: true } : {}}
       accessibilityLabel={options.tabBarAccessibilityLabel}
       onPress={onPress}
       onLongPress={onLongPress}
+      onPressIn={() => {
+        pressed.value = true;
+      }}
+      onPressOut={() => {
+        pressed.value = false;
+      }}
       style={styles.tabContainer}
     >
-      <Tab label={tabItem.label} icon={tabItem.icon} isFocused={isFocused} />
-    </TouchableOpacity>
+      <Animated.View style={rPressed}>
+        <Tab label={tabItem.label} icon={tabItem.icon} isFocused={isFocused} />
+      </Animated.View>
+    </Pressable>
   );
 };
 
@@ -95,25 +119,27 @@ interface TabProps {
 const Tab = React.memo(
   (props: TabProps) => {
     const { icon, label, isFocused, style } = props;
+    const rDriver = useDerivedValue(() =>
+      withSpring(isFocused ? 1 : 0, springConfig.switch),
+    );
+    const rTintDriver = useDerivedValue(() =>
+      interpolateColor(rDriver.value, [0, 1], [colors.blueGrey, colors.purple]),
+    );
+    const rTint = useAnimatedStyle(() => ({
+      tintColor: rTintDriver.value,
+    }));
+    const rColor = useAnimatedStyle(() => ({ color: rTintDriver.value }));
     return (
       <View style={style}>
         <View style={[styles.centered]}>
-          <Image
-            source={icon}
-            style={[
-              {
-                tintColor: isFocused ? colors.purple : colors.blueGrey,
-              },
-              styles.icon,
-            ]}
-          />
-          <Text
-            style={[styles.label, isFocused ? styles.labelFocused : undefined]}
+          <Animated.Image source={icon} style={[styles.icon, rTint]} />
+          <Animated.Text
+            style={[styles.label, rColor]}
             numberOfLines={1}
             ellipsizeMode={'tail'}
           >
             {label}
-          </Text>
+          </Animated.Text>
         </View>
       </View>
     );
