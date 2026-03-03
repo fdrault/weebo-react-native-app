@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   title: {
-    ...textStyles.h3,
+    ...textStyles.h4,
     paddingBottom: 4,
     flexShrink: 1,
   },

@@ -57,7 +57,6 @@ export class SeasonNowController<Result extends { data: any[] }> {
   }
 
   async fetch() {
-    console.log(`fetch isReady ${this.isReady}`);
     if (!this.isReady) {
       return await this.initialFetch();
     } else {
@@ -96,7 +95,6 @@ export class SeasonNowController<Result extends { data: any[] }> {
   }
 
   abort() {
-    console.log('abort');
     this.abortController?.abort();
     this.abortController = null;
     this.stateStore.patch({ refreshing: false, fetching: false });

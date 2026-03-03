@@ -1,3 +1,5 @@
+import { Route } from '@/core/navigation/route';
+import { useNavigation } from '@/core/navigation/use-navigation';
 import { useStore } from '@/core/store/store';
 import { useLazyRef } from '@/core/use-lazy-ref';
 import { animeService } from '@/lib/anime/anime-service';
@@ -10,10 +12,11 @@ import { LoadingIndicator } from '@/ui/loading-indicator';
 import { ScrollableScreen } from '@/ui/screen';
 import { useFocusEffect } from '@react-navigation/native';
 import { useCallback } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AnimeCard } from './anime-card';
 
 export const HomeScreen = () => {
+  const navigation = useNavigation();
   const fetcher = useLazyRef(
     () => new SeasonNowController(animeService.fetchSeasonNow),
   );
@@ -43,7 +46,15 @@ export const HomeScreen = () => {
           rowGap={16}
           columnGap={16}
           data={season}
-          renderItem={anime => <AnimeCard key={anime.mal_id} anime={anime} />}
+          renderItem={anime => (
+            <Pressable
+              onPress={() => {
+                navigation.push(Route.Detail, { anime });
+              }}
+            >
+              <AnimeCard key={anime.mal_id} anime={anime} />
+            </Pressable>
+          )}
         />
       )}
     </ScrollableScreen>

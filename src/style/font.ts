@@ -20,22 +20,27 @@ export const textStyles = {
   h1: {
     ...font.bold,
     fontSize: 30,
-    color: colors.blueGrey,
+    color: colors.white95,
   },
   h2: {
     ...font.bold,
     fontSize: 20,
-    color: colors.blueGrey,
+    color: colors.white95,
   },
   h3: {
     ...font.bold,
-    fontSize: 16,
-    color: colors.blueGrey,
+    fontSize: 18,
+    color: colors.white95,
   },
   h4: {
+    ...font.bold,
+    fontSize: 16,
+    color: colors.white95,
+  },
+  h5: {
     ...font.medium,
     fontSize: 14,
-    color: colors.blueGrey,
+    color: colors.white95,
   },
   regular: {
     ...font.regular,

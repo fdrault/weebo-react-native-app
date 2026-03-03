@@ -37,6 +37,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   title: {
-    ...textStyles.h4,
+    ...textStyles.h5,
   },
 });
