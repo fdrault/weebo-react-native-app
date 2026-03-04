@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from 'react';
 
 export const useStore = <T>(store: ReadableStore<T>) => {
-  return useSyncExternalStore(store.subscribe, store.get);
+  return useSyncExternalStore(store.subscribe, store.get, store.get);
 };
 
 type Listener<T> = (state: T) => void;
@@ -32,6 +32,7 @@ export const createStore = <State>(
   let currentState = initialState;
 
   const emit = () => {
+    console.log(`Emit for ${listeners.size}`, currentState);
     for (const listener of listeners) listener(currentState);
   };
 
@@ -139,9 +140,9 @@ export const combineStores = <
   const subscribe = (listener: Listener<Result>) => {
     const unsubs = storeEntries.map(([_, store]) =>
       store.subscribe(() => {
+        const previousResult = lastResult;
         const nextResult = get();
-        if (nextResult !== lastResult) {
-          lastResult = nextResult;
+        if (nextResult !== previousResult) {
           listener(lastResult);
         }
       }),
