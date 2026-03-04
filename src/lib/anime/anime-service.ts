@@ -1,8 +1,7 @@
 import { getAnimeSearch, getSeasonNow } from '@/core/api/jikan';
 import { AnimeData, GetAnimeSearchResponse } from '@/core/api/jikan-dto';
 import { combineStores, createStore } from '@/core/store/store';
-
-type MyAnimeListId = number;
+import { MyAnimeListId } from '@/lib/anime/my-anime-list-id';
 
 export class AnimeService {
   animes = createStore<Map<MyAnimeListId, AnimeData>>(new Map());

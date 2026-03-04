@@ -1,9 +1,11 @@
 import { AnimeData } from '@/core/api/jikan-dto';
 import { NavigationParamList } from '@/core/navigation/root-stack';
 import { Route } from '@/core/navigation/route';
+import { useStore } from '@/core/store/store';
 import { getAnimeCharacteritics } from '@/module/detail/detail-anime-format';
 import { DetailAnimeBlockTitle } from '@/module/detail/ui/detail-anime-block-title';
 import { DetailAnimeTile } from '@/module/detail/ui/detail-anime-tile';
+import { favoriteService } from '@/module/service';
 import { colors } from '@/style/color';
 import { textStyles } from '@/style/font';
 import { layout } from '@/style/layout';
@@ -20,6 +22,7 @@ export interface DetailScreenParams {
 }
 export const DetailScreen = (props: DetailScreenProps) => {
   const anime = props.route.params.anime;
+  const favorite = useStore(favoriteService.rankedFavoriteSet);
 
   const characteristics = getAnimeCharacteritics(anime);
   return (
@@ -52,7 +55,16 @@ export const DetailScreen = (props: DetailScreenProps) => {
                 tintColor={colors.white95}
               />
             }
-            label="Ajouter aux favoris"
+            label={
+              favorite.has(anime.mal_id)
+                ? 'Retirer des favoris'
+                : 'Ajouter aux favoris'
+            }
+            onPress={() =>
+              favorite.has(anime.mal_id)
+                ? favoriteService.remove(anime)
+                : favoriteService.add(anime)
+            }
           />
           <Grid
             data={characteristics}
