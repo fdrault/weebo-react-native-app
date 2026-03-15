@@ -8,6 +8,10 @@ export interface GetAnimeSearchResponse {
   pagination: Pagination;
 }
 
+export interface GetAnimeByIdResponse {
+  data: AnimeData;
+}
+
 export interface AnimeData {
   mal_id: number;
   url: string;

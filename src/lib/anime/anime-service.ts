@@ -1,5 +1,9 @@
 import { getAnimeSearch, getSeasonNow } from '@/core/api/jikan';
-import { AnimeData, GetAnimeSearchResponse } from '@/core/api/jikan-dto';
+import {
+  AnimeData,
+  GetAnimeByIdResponse,
+  GetAnimeSearchResponse,
+} from '@/core/api/jikan-dto';
 import { combineStores, createStore } from '@/core/store/store';
 import { MyAnimeListId } from '@/lib/anime/my-anime-list-id';
 
@@ -22,6 +26,15 @@ export class AnimeService {
       signal,
     );
     this.updateAnimeEntries(result.data);
+    return result;
+  };
+
+  getAnimeById: (
+    signal: AbortSignal,
+    params: { id: MyAnimeListId },
+  ) => Promise<GetAnimeByIdResponse> = async (signal, params) => {
+    const result = await this.getAnimeById(signal, { id: params.id });
+    this.updateAnimeEntries([result.data]);
     return result;
   };
 

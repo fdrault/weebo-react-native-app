@@ -8,7 +8,7 @@ import { StyleSheet } from 'react-native';
 
 export const FavoriteScreen = () => {
   const favorites = useStore(favoriteService.favorites);
-  console.log(`FavoriteScreen => ${favorites.length}`);
+
   return (
     <ScrollableScreen>
       <Header

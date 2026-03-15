@@ -32,7 +32,6 @@ export const createStore = <State>(
   let currentState = initialState;
 
   const emit = () => {
-    console.log(`Emit for ${listeners.size}`, currentState);
     for (const listener of listeners) listener(currentState);
   };
 

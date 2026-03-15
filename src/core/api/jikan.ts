@@ -1,5 +1,7 @@
+import { MyAnimeListId } from '@/lib/anime/my-anime-list-id';
 import {
   EntryType,
+  GetAnimeByIdResponse,
   GetAnimeSearchResponse,
   GetSeasonNowResponse,
 } from './jikan-dto';
@@ -42,6 +44,16 @@ export const getAnimeSearch = async (
   const result = await fetch(url, { signal });
   if (!result.ok) throw new Error('Failed to fetch');
   return (await result.json()) as GetAnimeSearchResponse;
+};
+
+export const getAnimeById = async (
+  params: { id: MyAnimeListId },
+  signal: AbortSignal,
+) => {
+  const url = `${JIKAN_BASE}anime/${params.id}`;
+  const result = await fetch(url, { signal });
+  if (!result.ok) throw new Error('Failed to fetch');
+  return (await result.json()) as GetAnimeByIdResponse;
 };
 
 const mapParams = (params: { [key: string]: unknown }) => {
