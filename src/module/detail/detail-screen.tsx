@@ -22,7 +22,7 @@ export interface DetailScreenParams {
 }
 export const DetailScreen = (props: DetailScreenProps) => {
   const anime = props.route.params.anime;
-  const favorite = useStore(favoriteService.rankedFavoriteSet);
+  const favorite = useStore(favoriteService.favoritesMap);
 
   const characteristics = getAnimeCharacteritics(anime);
   return (

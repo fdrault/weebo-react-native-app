@@ -1,22 +1,27 @@
 import { useStore } from '@/core/store/store';
-import { AnimeRow } from '@/module/search/anime-row';
+import { DraggableFavoriteList } from '@/module/favorite/draggable-favorite-list';
 import { favoriteService } from '@/module/service';
 import { layout } from '@/style/layout';
 import { Header } from '@/ui/header';
-import { ScrollableScreen } from '@/ui/screen';
+import { Screen } from '@/ui/screen';
+import { ScrollView } from 'react-native';
 
 export const FavoriteScreen = () => {
   const favorites = useStore(favoriteService.favorites);
 
   return (
-    <ScrollableScreen>
+    <Screen>
       <Header
         style={[layout.horizontalPaddedContainer, layout.topScreen]}
         title="Mes Favoris"
       />
-      {favorites.map(f => (
-        <AnimeRow key={f.id} anime={f.data} />
-      ))}
-    </ScrollableScreen>
+      <ScrollView>
+        <DraggableFavoriteList
+          style={layout.horizontalPaddedContainer}
+          items={favorites}
+          onReorder={(from, to) => favoriteService.reorder(from, to)}
+        />
+      </ScrollView>
+    </Screen>
   );
 };
