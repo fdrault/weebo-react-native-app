@@ -1,6 +1,7 @@
+import { RecordStorage } from '@/core/store/record-storage';
 import { createMMKV, MMKV } from 'react-native-mmkv';
 
-export class MMKVRecordStorage {
+export class MMKVRecordStorage implements RecordStorage<string> {
   private MMKV: MMKV;
   constructor(public id: string) {
     this.MMKV = createMMKV({ id });

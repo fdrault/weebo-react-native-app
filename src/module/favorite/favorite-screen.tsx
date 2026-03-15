@@ -4,7 +4,6 @@ import { favoriteService } from '@/module/service';
 import { layout } from '@/style/layout';
 import { Header } from '@/ui/header';
 import { ScrollableScreen } from '@/ui/screen';
-import { StyleSheet } from 'react-native';
 
 export const FavoriteScreen = () => {
   const favorites = useStore(favoriteService.favorites);
@@ -21,9 +20,3 @@ export const FavoriteScreen = () => {
     </ScrollableScreen>
   );
 };
-
-const styles = StyleSheet.create({
-  screen: {
-    flex: 1,
-  },
-});
